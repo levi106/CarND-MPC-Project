@@ -43,18 +43,22 @@ set(CMAKE_BUILD_TYPE Debug)
 
 I defined the vehicle model as the following fomula:
 
-$$x_{t+1} = x_{t} + v_{t} \times \cos(\psi_{t}) \times dt$$
-$$y_{t+1} = y_{t} + v_{t} \times \sin(\psi_{t}) \times dt$$
-$$\psi_{t+1} = \psi_{t} + (v_{t}/L_{f}) \times \delta_{t} \times dt$$
-$$v_{t+1} = v_{t} + a_{t} \times dt$$
-$$cte_{t+1} = f(x_{t}) - y_{t} + v_{t} \times \sin(e \psi_{t}) \times dt$$
-$$e\psi_{t+1} = \psi_{t} - \psi des_{t} + (v_{t}/L_{f}) \times \delta_{t} \times dt$$
+```math
+x_{t+1} = x_{t} + v_{t} \times \cos(\psi_{t}) \times dt
+y_{t+1} = y_{t} + v_{t} \times \sin(\psi_{t}) \times dt
+\psi_{t+1} = \psi_{t} + (v_{t}/L_{f}) \times \delta_{t} \times dt
+v_{t+1} = v_{t} + a_{t} \times dt
+cte_{t+1} = f(x_{t}) - y_{t} + v_{t} \times \sin(e \psi_{t}) \times dt
+e\psi_{t+1} = \psi_{t} - \psi des_{t} + (v_{t}/L_{f}) \times \delta_{t} \times dt
+```
 
 with constraints: 
 
-$$-0.436332 rad < \delta < 0.436332 rad$$
-$$and$$
-$$-1 < a < 1$$
+```math
+-0.436332 rad < \delta < 0.436332 rad
+and
+-1 < a < 1
+```
 
 First, I pass the current state $(x_{1}, y_{1}, \phi_{1}, v_{1}, cte_{1}, e\phi_{1})$ which I will describe later to the model.
 
@@ -62,7 +66,9 @@ Next, the optimization solver is called. The solver uses the initial state, the 
 
 Below I will explain how I selected the cost function $J$ defined as following:
 
-$$J = \sum_{t=0}^{N-1} (w_{cte}\cdot cte_{t}^{2} + w_{\psi}\cdot e\psi_{t}^{2} + w_{v}\cdot (v_{t} - v_{ref})^{2}) + \sum_{t=0}^{N-2} (w_{\delta}\cdot \delta_{t}^{2} + w_{a}\cdot a_{t}^{2}) + \sum_{t=0}^{t-3} (w_{\Delta\delta}\cdot (\delta_{t+1} - \delta_{t})^2 + w_{\Delta a}\cdot (a_{t+1} - a_{t})^{2})$$
+```math
+J = \sum_{t=0}^{N-1} (w_{cte}\cdot cte_{t}^{2} + w_{\psi}\cdot e\psi_{t}^{2} + w_{v}\cdot (v_{t} - v_{ref})^{2}) + \sum_{t=0}^{N-2} (w_{\delta}\cdot \delta_{t}^{2} + w_{a}\cdot a_{t}^{2}) + \sum_{t=0}^{t-3} (w_{\Delta\delta}\cdot (\delta_{t+1} - \delta_{t})^2 + w_{\Delta a}\cdot (a_{t+1} - a_{t})^{2})
+```
 
 where $w_{X}$ are weight values.
 
@@ -144,11 +150,13 @@ double v = mph2mps(j[1]["speed"]);
 
 I predicted the position of the car after 100 milliseconds by the following calculation:
 
-$$dt = 0.1$$
-$$x' = x + v \times \cos(\psi) \times dt$$
-$$y' = y + v \times \sin(\psi) \times dt$$
-$$\psi' = \psi - (v / Lf) \times \delta \times dt$$
-$$v' = v + a \times dt$$ 
+```math
+dt = 0.1
+x' = x + v \times \cos(\psi) \times dt
+y' = y + v \times \sin(\psi) \times dt
+\psi' = \psi - (v / Lf) \times \delta \times dt
+v' = v + a \times dt
+```
 
 The following is the actual code (main.cpp l.90):
 
